@@ -2,8 +2,7 @@
 
 A Neovim plugin for controlling MPV media player directly from your editor. Perfect for developers who enjoy background music while coding, especially designed for macOS users.
 
-A personal project to explore Neovim plugin development, inspired by tools like lazygit, before transitioning to using Cursor editor.
-A Vim-inspired interface for controlling MPV directly from your editor, bringing media control to your fingertips.
+A personal project to explore Neovim plugin development, inspired by tools like lazygit.
 
 ## Screenshots
 
