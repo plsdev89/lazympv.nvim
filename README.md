@@ -7,7 +7,7 @@ A Vim-inspired interface for controlling MPV directly from your editor, bringing
 
 ## Screenshots
 
-![Plugin UI](./screenshots/plugin-ui.png)
+![Plugin UI](./.screenshots/plugin-ui.png)
 
 ## Features
 
