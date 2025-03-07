@@ -39,7 +39,6 @@ M.start = function()
 				"--no-terminal",
 				"--idle=yes",
 			}, { detach = true })
-			M.start_monitoring()
 		end
 	else
 		print("Failed to check if MPV is running.")

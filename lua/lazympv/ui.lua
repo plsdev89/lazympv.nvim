@@ -13,6 +13,7 @@ M.toggle = function()
 	end
 
 	mpv.start()
+	mpv.start_monitoring()
 	buf = vim.api.nvim_create_buf(false, true) -- No file, no swap
 
 	local width = 65
