@@ -5,19 +5,20 @@ local socket_path = "/tmp/mpvsocket"
 
 -- Ensure mpv and socat are installed
 if not util.is_command_available("mpv") then
-	vim.api.nvim_err_writeln("Error: 'mpv' is not installed. Please install 'mpv'.")
+	vim.notify("Error: 'mpv' is not installed. Please install 'mpv'.", vim.log.levels.ERROR)
 	return
 end
 
 if not util.is_command_available("socat") then
-	vim.api.nvim_err_writeln("Error: 'socat' is not installed. Please install 'socat'.")
+	vim.notify("Error: 'socat' is not installed. Please install 'socat'.", vim.log.levels.ERROR)
 	return
 end
 
 -- Ensure plugin is only used on macOS
 if not util.is_mac() then
-	vim.api.nvim_err_writeln(
-		"Warning: This plugin is only tested on macOS. It may not work correctly on other systems."
+	vim.notify(
+		"Warning: This plugin is only tested on macOS. It may not work correctly on other systems.",
+		vim.log.levels.ERROR
 	)
 	return
 end
