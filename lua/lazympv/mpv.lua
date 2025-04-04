@@ -99,7 +99,7 @@ end
 M.next = function()
 	local playlists = config.get_playlists()
 	local last_played_index = config.get_last_played_index()
-	local index_to_play = last_played_index == #playlists and 1 or last_played_index + 1
+	local index_to_play = last_played_index >= #playlists and 1 or last_played_index + 1
 	M.play(playlists[index_to_play].url)
 	config.set_last_played_index(index_to_play)
 end
