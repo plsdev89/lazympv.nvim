@@ -1,8 +1,6 @@
 local M = {}
 local mpv = require("lazympv.mpv")
 local config = require("lazympv.config")
-
-local playlists = config.get_playlists()
 local buf, win
 
 M.toggle = function()
@@ -17,6 +15,7 @@ M.toggle = function()
 	buf = vim.api.nvim_create_buf(false, true) -- No file, no swap
 
 	local width = 65
+	local playlists = config.get_playlists()
 	local height = math.min(#playlists + 2, 10)
 	local row = math.floor((vim.o.lines - height) / 2)
 	local col = math.floor((vim.o.columns - width) / 2)
@@ -77,6 +76,7 @@ M.play_selected = function()
 	local cursor = vim.api.nvim_win_get_cursor(win)
 	local line = cursor[1] - 2 -- Adjust for title and separator lines
 
+	local playlists = config.get_playlists()
 	if line > 0 and line <= #playlists then
 		vim.api.nvim_win_close(win, true)
 		mpv.play(playlists[line].url)

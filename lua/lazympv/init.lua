@@ -1,9 +1,8 @@
 local M = {}
 local config = require("lazympv.config")
 
-local playlists = config.get_playlists()
-
 M.setup = function()
+	local playlists = config.get_playlists()
 	config.set_playlists(playlists)
 	vim.api.nvim_set_keymap(
 		"n",

@@ -1,8 +1,6 @@
 local M = {}
 local config = require("lazympv.config")
 local util = require("lazympv.util")
-
-local playlists = config.get_playlists()
 local socket_path = "/tmp/mpvsocket"
 
 -- Ensure mpv and socat are installed
@@ -98,6 +96,7 @@ M.play = function(url)
 end
 
 M.next = function()
+	local playlists = config.get_playlists()
 	local last_played_index = config.get_last_played_index()
 	local index_to_play = last_played_index == #playlists and 1 or last_played_index + 1
 	M.play(playlists[index_to_play].url)
@@ -105,6 +104,7 @@ M.next = function()
 end
 
 M.prev = function()
+	local playlists = config.get_playlists()
 	local last_played_index = config.get_last_played_index()
 	local index_to_play = last_played_index == 1 and #playlists or last_played_index - 1
 	M.play(playlists[index_to_play].url)
