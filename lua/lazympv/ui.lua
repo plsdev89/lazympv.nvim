@@ -66,6 +66,13 @@ M.toggle = function()
 		":lua require('lazympv.ui').toggle()<CR>",
 		{ noremap = true, silent = true, nowait = true, desc = "Close" }
 	)
+	vim.api.nvim_buf_set_keymap(
+		buf,
+		"n",
+		"a",
+		":lua require('lazympv.ui').add_song()<CR>",
+		{ noremap = true, silent = true, nowait = true, desc = "Add Song" }
+	)
 end
 
 M.play_selected = function()
@@ -82,6 +89,48 @@ M.play_selected = function()
 		mpv.play(playlists[line].url)
 		config.set_last_played_index(line)
 	end
+end
+
+M.add_song = function()
+	-- Prompt for title
+	local title = vim.fn.input("Enter song title: ")
+	if title == "" then
+		vim.api.nvim_echo({ { "Cancelled: No title provided", "WarningMsg" } }, true, {})
+		return
+	end
+
+	-- Prompt for URL
+	local url = vim.fn.input("Enter song URL: ")
+	if url == "" then
+		vim.api.nvim_echo({ { "Cancelled: No URL provided", "WarningMsg" } }, true, {})
+		return
+	end
+
+	-- Save the song
+	local success = config.add_song(title, url)
+	if success then
+		vim.api.nvim_echo({ { "Song added successfully!", "String" } }, true, {})
+		-- Refresh the playlist window if it's open
+		if win and vim.api.nvim_win_is_valid(win) then
+			M.refresh_playlist()
+		end
+	else
+		vim.api.nvim_echo({ { "Failed to add song", "ErrorMsg" } }, true, {})
+	end
+end
+
+M.refresh_playlist = function()
+	if not win or not vim.api.nvim_win_is_valid(win) then
+		return
+	end
+
+	local playlists = config.get_playlists()
+	local lines = { "LazyMPV", "-----------------------------------------------------------------" }
+	for i, playlist in ipairs(playlists) do
+		table.insert(lines, string.format("%d. %s", i, playlist.title))
+	end
+
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 end
 
 return M

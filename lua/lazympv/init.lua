@@ -28,6 +28,12 @@ M.setup = function()
 		":lua require('lazympv.mpv').prev()<CR>",
 		{ noremap = true, silent = true, desc = "Play Previous" }
 	)
+	vim.api.nvim_set_keymap(
+		"n",
+		"<leader>pa",
+		":lua require('lazympv.ui').add_song()<CR>",
+		{ noremap = true, silent = true, desc = "Add Song" }
+	)
 end
 
 return M

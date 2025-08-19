@@ -67,12 +67,12 @@ end
 
 M.get_playlists = function()
   return load_playlists()
-    or {
-      {
-        title = "3 AM Coding Session - Lofi Hip Hop Mix [Study & Coding Beats]",
-        url = "https://www.youtube.com/watch?v=_ITiwPMUzho",
-      },
-    }
+      or {
+        {
+          title = "3 AM Coding Session - Lofi Hip Hop Mix [Study & Coding Beats]",
+          url = "https://www.youtube.com/watch?v=_ITiwPMUzho",
+        },
+      }
 end
 
 M.set_playlists = function(new_playlists)
@@ -93,6 +93,24 @@ M.set_playlists = function(new_playlists)
   end
 
   file:close()
+end
+
+M.add_song = function(title, url)
+  local xdg_config_home = os.getenv "XDG_CONFIG_HOME" or os.getenv "HOME" .. "/.config"
+
+  local directory_path = xdg_config_home .. "/lazympv"
+  local file_path = directory_path .. "/playlists.txt"
+
+  create_directory(directory_path)
+
+  local file = io.open(file_path, "a")
+  if not file then
+    return false
+  end
+
+  file:write('"' .. title .. '"="' .. url .. '"\n')
+  file:close()
+  return true
 end
 
 return M

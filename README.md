@@ -12,6 +12,7 @@ A personal project to explore Neovim plugin development, inspired by tools like 
 
 - Control MPV player directly from Neovim
 - Manage and play YouTube playlists
+- Add new songs interactively through the UI
 - Persistent playlist storage
 - Simple and intuitive keybindings
 - Seamless integration with your coding workflow
@@ -54,6 +55,7 @@ use {
 - `<leader>pq` - Quit MPV player
 - `<leader>pn` - Play next track
 - `<leader>pN` - Play previous track
+- `<leader>pa` - Add new song to playlist
 
 ## Configuration
 
@@ -84,7 +86,9 @@ lua/lazympv/
    - Toggle the player with `<leader>pp`
    - Navigate through tracks with `<leader>pn` and `<leader>pN`
    - Quit the player with `<leader>pq`
-3. Add new playlist entries by editing `~/.config/lazympv/playlists.txt` and adding lines in the format "title"="url".
+3. Add new playlist entries by:
+   - Using the `<leader>pa` keybinding to interactively add songs
+   - Or manually editing `~/.config/lazympv/playlists.txt` and adding lines in the format "title"="url"
 
 ## Notes
 
