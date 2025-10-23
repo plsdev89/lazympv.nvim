@@ -261,6 +261,44 @@ M.delete_song = function(index)
   return M.set_playlists(playlists)
 end
 
+M.edit_song = function(index, new_title, new_url)
+  if not index or index < 1 then
+    vim.notify("Invalid song index for editing", vim.log.levels.ERROR)
+    return false
+  end
+
+  local playlists = M.get_playlists()
+  if not playlists or #playlists == 0 then
+    vim.notify("No playlists available to edit", vim.log.levels.WARN)
+    return false
+  end
+
+  if index > #playlists then
+    vim.notify("Song index out of range", vim.log.levels.ERROR)
+    return false
+  end
+
+  -- Validate new inputs
+  local sanitized_title, title_err = sanitize_title(new_title)
+  if not sanitized_title then
+    vim.notify("Invalid title: " .. title_err, vim.log.levels.ERROR)
+    return false
+  end
+
+  local valid_url, url_err = validate_url(new_url)
+  if not valid_url then
+    vim.notify("Invalid URL: " .. url_err, vim.log.levels.ERROR)
+    return false
+  end
+
+  -- Update the song at the specified index
+  playlists[index].title = sanitized_title
+  playlists[index].url = new_url
+
+  -- Save the updated playlists
+  return M.set_playlists(playlists)
+end
+
 M.reset_playlist = function()
   -- Default playlist with the "3 AM Coding Session" song
   local default_playlist = {

@@ -93,8 +93,8 @@ M.toggle = function()
 		buf,
 		"n",
 		"r",
-		":lua require('lazympv.ui').reset_playlist()<CR>",
-		{ noremap = true, silent = true, nowait = true, desc = "Reset Playlist" }
+		":lua require('lazympv.ui').edit_song()<CR>",
+		{ noremap = true, silent = true, nowait = true, desc = "Edit Song" }
 	)
 end
 
@@ -121,7 +121,6 @@ M.play_selected = function()
 
 		if mpv.play(playlists[line].url) then
 			config.set_last_played_index(line)
-			vim.notify("Playing: " .. playlists[line].title, vim.log.levels.INFO)
 		else
 			vim.notify("Failed to play track", vim.log.levels.ERROR)
 		end
@@ -211,6 +210,52 @@ M.delete_song = function()
 		end
 	else
 		vim.notify("Invalid track selection for deletion", vim.log.levels.WARN)
+	end
+end
+
+M.edit_song = function()
+	if not win or not vim.api.nvim_win_is_valid(win) then
+		vim.notify("UI window is not available", vim.log.levels.WARN)
+		return
+	end
+
+	local cursor = vim.api.nvim_win_get_cursor(win)
+	local line = cursor[1] - 2 -- Adjust for title and separator lines
+
+	local playlists = config.get_playlists()
+	if not playlists or #playlists == 0 then
+		vim.notify("No playlists available to edit", vim.log.levels.WARN)
+		return
+	end
+
+	if line > 0 and line <= #playlists then
+		local current_song = playlists[line]
+		
+		-- Prompt for new title (with current title as default)
+		local new_title = vim.fn.input("Enter new title: ", current_song.title)
+		if new_title == "" then
+			vim.notify("Cancelled: No title provided", vim.log.levels.WARN)
+			return
+		end
+
+		-- Prompt for new URL (with current URL as default)
+		local new_url = vim.fn.input("Enter new URL: ", current_song.url)
+		if new_url == "" then
+			vim.notify("Cancelled: No URL provided", vim.log.levels.WARN)
+			return
+		end
+
+		-- Edit the song
+		local success = config.edit_song(line, new_title, new_url)
+		if success then
+			vim.notify("Song edited successfully!", vim.log.levels.INFO)
+			-- Refresh the playlist window
+			M.refresh_playlist()
+		else
+			vim.notify("Failed to edit song", vim.log.levels.ERROR)
+		end
+	else
+		vim.notify("Invalid track selection for editing", vim.log.levels.WARN)
 	end
 end
 
