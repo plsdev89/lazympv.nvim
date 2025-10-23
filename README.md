@@ -1,28 +1,12 @@
 # lazympv.nvim
 
-A Neovim plugin for controlling MPV media player directly from your editor. Perfect for developers who enjoy background music while coding, especially designed for macOS users.
-
-A personal project to explore Neovim plugin development, inspired by tools like lazygit.
-
-## Screenshots
-
-![Plugin UI](./.screenshots/plugin-ui.png)
-
-## Features
-
-- Control MPV player directly from Neovim
-- Manage and play YouTube playlists
-- Add new songs interactively through the UI
-- Persistent playlist storage
-- Simple and intuitive keybindings
-- Seamless integration with your coding workflow
+A Neovim plugin for controlling MPV media player directly from your editor.
 
 ## Prerequisites
 
-- macOS (plugin is currently tested only on macOS)
+- macOS
 - mpv player (`brew install mpv`)
 - socat (`brew install socat`)
-- Neovim
 
 ## Installation
 
@@ -38,68 +22,43 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 }
 ```
 
-Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
-
-```lua
-use {
-    'plsdev89/lazympv.nvim',
-    config = function()
-        require('lazympv').setup()
-    end
-}
-```
-
 ## Default Keybindings
 
-- `<leader>pp` - Toggle MPV player UI
-- `<leader>pq` - Quit MPV player
-- `<leader>pn` - Play next track
-- `<leader>pN` - Play previous track
-- `<leader>pa` - Add new song to playlist
+From editor
 
-## Configuration
+- `<leader>pp` - Toggle MPV
+- `<leader>pq` - Quit MPV
+- `<leader>pn` - Play Next
+- `<leader>pN` - Play Previous
+- `<leader>pa` - Add Song
+- `<leader>pr` - Reset Playlist
 
-The plugin stores its configuration in `~/.config/lazympv/` directory, including:
+From LazyMPV UI
 
-- `playlists.txt` - Stores your playlist information
-- `last_played_index.txt` - Remembers your last played track
+- `<CR>` - Play selected song
+- `q` - Toggle MPV
+- `a` - Add Song
+- `d` - Delete Song
+- `r` - Edit Song
 
-Default playlist includes:
+## Usage Tips
 
-- "3 AM Coding Session - Lofi Hip Hop Mix [Study & Coding Beats]"
+**Getting Started:**
 
-You can modify the playlists by editing the configuration file or through the plugin's interface.
+- Open LazyMPV UI with `<leader>pp`
+- Navigate songs using `j`/`k` (standard vim navigation)
+- Play selected song with `<Enter>`
+- Close UI with `q` (When you hit Enter, it closes automatically)
 
-## File Structure
+**Managing Playlist:**
 
-lua/lazympv/
-├── init.lua # Plugin initialization and setup
-├── config.lua # Configuration management
-├── mpv.lua # MPV player control
-├── ui.lua # User interface components
-└── util.lua # Utility functions
+- Add new song with `a` (prompts for title and URL)
+- Delete song with `d` (cannot delete if you have only 1)
+- Edit song with `r` (rename title/URL)
+- Reset entire playlist with `<leader>pr` from editor
 
-## Usage
+**Quick Controls:**
 
-1. Install the plugin using your preferred package manager
-2. Use the keybindings to control MPV player:
-   - Toggle the player with `<leader>pp`
-   - Navigate through tracks with `<leader>pn` and `<leader>pN`
-   - Quit the player with `<leader>pq`
-3. Add new playlist entries by:
-   - Using the `<leader>pa` keybinding to interactively add songs
-   - Or manually editing `~/.config/lazympv/playlists.txt` and adding lines in the format "title"="url"
-
-## Notes
-
-- This plugin is currently tested only on macOS
-- Requires both `mpv` and `socat` to be installed
-- Playlist state is persisted between sessions
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Author
-
-[plsdev89](https://github.com/plsdev89)
+- Use `<leader>pn`/`<leader>pN` to skip tracks from anywhere
+- Use `<leader>pq` to quit MPV from anywhere
+- Playlist state persists between sessions

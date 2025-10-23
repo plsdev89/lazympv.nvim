@@ -66,7 +66,7 @@ M.toggle = function()
 		"n",
 		"<CR>",
 		":lua require('lazympv.ui').play_selected()<CR>",
-		{ noremap = true, silent = true, nowait = true, desc = "Start" }
+		{ noremap = true, silent = true, nowait = true, desc = "Play selected song" }
 	)
 	vim.api.nvim_buf_set_keymap(
 		buf,

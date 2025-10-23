@@ -10,7 +10,6 @@ local default_config = {
     next = "<leader>pn",
     prev = "<leader>pN",
     add_song = "<leader>pa",
-    delete_song = "<leader>pd",
     reset_playlist = "<leader>pr",
   },
 }

@@ -47,12 +47,6 @@ M.setup = function(user_config)
   )
   vim.api.nvim_set_keymap(
     "n",
-    keybindings.delete_song,
-    ":lua require('lazympv.ui').delete_song()<CR>",
-    { noremap = true, silent = true, desc = "Delete Song" }
-  )
-  vim.api.nvim_set_keymap(
-    "n",
     keybindings.reset_playlist,
     ":lua require('lazympv.ui').reset_playlist()<CR>",
     { noremap = true, silent = true, desc = "Reset Playlist" }
