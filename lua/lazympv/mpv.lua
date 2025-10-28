@@ -24,12 +24,14 @@ if not util.is_mac() then
 end
 
 M.start = function()
-  local handle = io.popen "pgrep -x mpv"
+  -- Check if MPV is already running with the correct socket
+  local handle = io.popen("pgrep -f 'mpv.*input-ipc-server=" .. socket_path .. "'")
   if handle then
     local result = handle:read "*a"
     handle:close()
 
     if result == "" then
+      -- No MPV instance with our socket is running, start one
       vim.fn.jobstart({
         "mpv",
         "--input-ipc-server=" .. socket_path,
@@ -38,9 +40,19 @@ M.start = function()
         "--no-terminal",
         "--idle=yes",
       }, { detach = true })
+
+      -- Give MPV a moment to start and create the socket
+      vim.defer_fn(function()
+        -- MPV should be ready now
+      end, 1000)
+    else
+      -- MPV is already running with our socket, just ensure monitoring is active
+      if not M.monitoring_job then
+        M.start_monitoring()
+      end
     end
   else
-    print "Failed to check if MPV is running."
+    vim.notify("Failed to check if MPV is running", vim.log.levels.ERROR)
   end
 end
 
@@ -51,24 +63,35 @@ M.quit = function()
     M.monitoring_job = nil
   end
 
-  local handle = io.popen "pgrep -x mpv"
+  -- Find and kill all MPV processes with our socket
+  local handle = io.popen("pgrep -f 'mpv.*input-ipc-server=" .. socket_path .. "'")
   if handle then
     local result = handle:read "*a"
     handle:close()
 
     if result ~= "" then
-      local ipc = io.popen("echo 'quit' | socat - UNIX-CONNECT:" .. socket_path)
-
+      -- Try to send quit command first
+      local ipc = io.popen('echo \'{"command": ["quit"]}\' | socat - ' .. socket_path .. " 2>/dev/null")
       if ipc then
         ipc:close()
-      else
-        print "Failed to send quit command to MPV."
+        -- Give MPV a moment to quit gracefully
+        vim.defer_fn(function()
+          -- MPV should have quit gracefully by now
+        end, 500)
       end
+
+      -- Force kill if still running
+      local kill_handle = io.popen("pkill -f 'mpv.*input-ipc-server=" .. socket_path .. "'")
+      if kill_handle then
+        kill_handle:close()
+      end
+
+      vim.notify("MPV stopped", vim.log.levels.INFO)
     else
-      print "MPV is not running."
+      vim.notify("MPV is not running", vim.log.levels.INFO)
     end
   else
-    print "Failed to check if MPV is running."
+    vim.notify("Failed to check if MPV is running", vim.log.levels.ERROR)
   end
 end
 
@@ -128,21 +151,22 @@ M.send_command = function(command)
 end
 
 M.play = function(url)
-  -- Check if mpv is running
-  local handle = io.popen "pgrep -x mpv"
-  if not handle then
-    vim.notify("Failed to check mpv status", vim.log.levels.ERROR)
+  -- Ensure MPV is running with our socket
+  M.start()
+
+  -- Test socket connection before proceeding
+  local test_handle = io.popen('echo \'{"command": ["get_property", "pause"]}\' | socat - ' .. socket_path .. " 2>&1")
+  if not test_handle then
+    vim.notify("Failed to test MPV socket connection", vim.log.levels.ERROR)
     return false
   end
 
-  local result = handle:read "*a"
-  handle:close()
+  local test_result = test_handle:read "*a"
+  test_handle:close()
 
-  if result == "" then
-    vim.notify("mpv is not running. Starting mpv...", vim.log.levels.WARN)
-    M.start()
-    -- Give mpv a moment to start
-    vim.fn.sleep(1)
+  if test_result:match "Connection refused" or test_result:match "No such file" then
+    vim.notify("MPV socket not available. Please restart MPV.", vim.log.levels.ERROR)
+    return false
   end
 
   if not url then
